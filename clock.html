@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Canvas Clock</title>
+</head>
+<body>
+  <section>
+    
+    <div>
+      <canvas id="clock" width="200" height="200">Your browser does not support canvas and needs an update. :(</canvas>
+      <p id="current-time"></p>
+    </div>
+    
+    <script type="text/javascript">
+      var canvas;
+      var WIDTH = 500;
+      var HEIGHT = 500;
+      
+      function drawDesign() {
+        //clear();
+        //ctx.fillStyle = "white";
+        //ctx.strokeStyle = "black";
+        //rect(0,0,WIDTH,HEIGHT);
+        //ctx.fillStyle = "purple";
+        ctx.fillStyle = "rgb(" + (Math.floor(Math.random() * 255)) + ", " + (Math.floor(Math.random() * 255)) + ", " + (Math.floor(Math.random() * 255)) + ")";
+        //ctx.strokeStyle = "rgb(" + (Math.floor(Math.random() * 255)) + ", " + (Math.floor(Math.random() * 255)) + ", " + (Math.floor(Math.random() * 255)) + ")";
+        circle(x, y, Math.random() * (100-10) + 10);
+        cx = 50;
+        cy = 50;
+        lg_rad = 30;
+        sm_rad = 10;
+        nbr_circles = 10;
+        for (var i = 1; i <= nbr_circles; ++i) {
+          ctx.beginPath();
+          var angle = i*2*Math.PI/nbr_circles;
+          var x = cx + Math.cos(angle) * lg_rad;
+          var y = cy + Math.sin(angle) * lg_rad;
+          ctx.arc(x, y, sm_rad, 0, 360, false);
+          ctx.fill();
+        }
+        
+      }
+      
+      function startTimer() {
+          setInterval(clockDraw, 1000);
+          clockDraw();
+      }
+      
+      function clockDraw() {
+      
+        var now = new Date();
+        var h = now.getHours();
+        var m = now.getMinutes();
+        var s = now.getSeconds();
+        var timeString = formatHour(h) + ":" + padZero(m) + ":" + padZero(s) + " " + getTimePeriod(h);
+        document.querySelector("#current-time").innerHTML = timeString;
+      
+        // --- Analog clock ---//
+        var canvas = document.querySelector("#clock");
+        var context = canvas.getContext("2d");
+            context.clearRect(0, 0, WIDTH, HEIGHT);
+        // You can change this to make the clock as big or small as you want.
+        // Just remember to adjust the canvas size if necessary.
+        var clockRadius = 100;
+         
+        // Make sure the clock is centered in the canvas
+        var clockX = canvas.width / 2;
+        var clockY = canvas.height / 2;
+        
+        // <-- Put math here later 
+        // Make sure TAU is defined (it's not by default)
+        Math.TAU = 2 * Math.PI;
+
+        function drawArm(progress, armThickness, armLength, armColor) {
+            var armRadians = (Math.TAU * progress) - (Math.TAU/4);
+            var armLength = clockRadius;
+         
+            var targetX = clockX + Math.cos(armRadians) * armLength;
+            var targetY = clockY + Math.sin(armRadians) * armLength;
+         
+            context.lineWidth = (armThickness) ? armThickness : 10;
+            context.strokeStyle = (armColor) ? armColor : '#DD0000'; // RED
+         
+            context.beginPath();
+            context.moveTo(clockX, clockY); // Start at the center
+            context.lineTo(targetX, targetY); // Draw a line outwards
+            context.stroke();
+        }
+
+        drawArm(h / 12, 10, 0.50, '#DD0000'); // Hour
+        drawArm(m / 60, 4,  0.75, '#00DD00'); // Minute
+        drawArm(s / 60, 2,  1.00, '#000000'); // Second
+      }
+      
+      function padZero(num) {
+          if (num < 10) { 
+              return "0" + String(num);
+          }
+          else {
+              return String(num);
+          }
+      }
+      
+      function formatHour(h) {
+          var hour = h % 12;
+       
+          if (hour == 0) { 
+              hour = 12; 
+          }
+           
+          return String(hour)
+      }
+      
+      function getTimePeriod(h) {
+          return (h < 12) ? "AM" : "PM";
+      }
+
+      document.addEventListener('DOMContentLoaded', startTimer);
+    </script>
+  </section>
+  
+  <style>
+    #current-time {
+      display: block;
+      font-weight: bold;
+      text-align: center;
+      width: 200px;
+      padding: 10px;
+      border:1px solid #000000;
+    }
+     
+    #clock {
+      padding: 10px;
+      border:1px solid #000000;
+      background-image: url('background.png');
+      background-size: 100%;
+    }
+  </style>
+  
+</body>
+</html>
